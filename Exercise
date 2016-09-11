@@ -3,6 +3,9 @@ library(Zelig)
 list.files("dataSets")
 states.data <- readRDS("dataSets/states.rds")
 
+#get labels
+states.info<- data.frame(attributes(states.data)[c("names", "var.labels")])
+
 #looking at energy and metro from states dataset
 sts.energy.metro <- subset(states.data, select= c("energy", "metro"))
 summary(sts.energy.metro)
