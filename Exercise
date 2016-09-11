@@ -1,0 +1,17 @@
+#setup
+library(Zelig)
+list.files("dataSets")
+states.data <- readRDS("dataSets/states.rds")
+
+#looking at energy and metro from states dataset
+sts.energy.metro <- subset(states.data, select= c("energy", "metro"))
+summary(sts.energy.metro)
+
+#looking for correlation between the energy and metro
+cor(sts.energy.metro)
+
+plot(sts.energy.metro)
+
+#create linear regression model
+energy.metro.mod <- lm(energy ~ metro, data=states.data)
+summary(energy.metro.mod)
