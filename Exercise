@@ -1,10 +1,11 @@
 #setup
-library(Zelig)
+library(dplyr)
 list.files("dataSets")
 states.data <- readRDS("dataSets/states.rds")
 
 #get labels
 states.info<- data.frame(attributes(states.data)[c("names", "var.labels")])
+View(states.info)
 
 #looking at energy and metro from states dataset
 sts.energy.metro <- subset(states.data, select= c("energy", "metro"))
@@ -13,8 +14,39 @@ summary(sts.energy.metro)
 #looking for correlation between the energy and metro
 cor(sts.energy.metro)
 
+#filter out NA from the energy and metro column and recalculate cor
+sts.energy.metro <- sts.energy.metro%>%filter(!is.na(energy) | !is.na(metro))
+
+cor(sts.energy.metro)
+
 plot(sts.energy.metro)
 
 #create linear regression model
 energy.metro.mod <- lm(energy ~ metro, data=states.data)
 summary(energy.metro.mod)
+
+#looking at energy, metro, and area from states dataset
+sts.energy.metro.area <- subset(states.data, select= c("energy", "metro", "area"))
+summary(sts.energy.metro.area.pop)
+
+#looking for correlation between the energy, metro, and area
+cor(sts.energy.metro.area)
+
+#filter out NA from energy, metro, and area column and recalculate cor
+sts.energy.metro.area <-  sts.energy.metro%>%filter(!is.na(energy) | !is.na(metro) | !is.na(area))
+
+cor(sts.energy.metro.area)
+
+plot(sts.energy.metro.area)
+energy.metro.area.mod <- lm(energy ~ metro + area, data=states.data)
+summary(energy.metro.area.mod)
+
+#Using metro and area as interaction terms
+energy.metro.area.mod <- lm(energy ~ metro + area + metro*area, data=states.data)
+
+#Because metro is not considered significant when tested as an interaction term, we can concluded that  does not significantly affect the energy
+
+energy.area.mod <- lm(energy~area, data=states.data)
+summary(energy.area.mod)
+
+#The amount of area that energy needs to be distributed is a better predictor of how much energy is consumed per capita than metro is.
